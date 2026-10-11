@@ -1,0 +1,17 @@
+{
+  "total_records": 3369,
+  "total_content_units": 27617,
+  "total_words": 3959856,
+  "total_characters": 24489618,
+  "label_distribution": {
+    "false": 1492,
+    "nei": 602,
+    "true": 1275
+  },
+  "unit_type_distribution": {
+    "claim": 3369,
+    "justification": 3367,
+    "digest": 2611,
+    "evidence": 18270
+  }
+}

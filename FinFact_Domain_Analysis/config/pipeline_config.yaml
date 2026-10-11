@@ -1,0 +1,150 @@
+# ==============================================================================
+# FinFact Domain-Specific NLP & Information Retrieval Configuration
+# Pipeline A: Lemmatization (Empirically Validated Best Architecture)
+# ==============================================================================
+
+project:
+  name: "FinFact_Domain_Analysis"
+  domain: "Financial Fact-Checking & Economic Evidence Retrieval"
+  version: "1.0.0"
+  random_seed: 42
+  encoding: "utf-8"
+
+paths:
+  raw_dataset: "c:/Users/radhe/Downloads/NLP/Fin-Fact/finfact.json"
+  structured_corpus: "data/structured/corpus.jsonl"
+  claim_registry: "data/metadata/claim_registry.csv"
+  unit_registry: "data/metadata/unit_registry.csv"
+  summary_stats: "data/metadata/corpus_summary.json"
+  index_file: "results/index/positional_index.json"
+  unit_store: "results/index/unit_store.json"
+  benchmark_results: "results/evaluation/benchmark_report.json"
+  benchmark_csv: "results/evaluation/benchmark_table.csv"
+
+cleaning:
+  enabled: true
+  normalize_unicode: true
+  fix_glued_punctuation: true
+  fix_contractions: true
+  filter_web_boilerplate: true
+  collapse_whitespace: true
+  preserve_monetary_symbols: ["$", "€", "£", "₹", "¥"]
+  preserve_percentages: true
+  preserve_fiscal_terms: true
+  boilerplate_phrases:
+    - "become a founding member"
+    - "fighting an infodemic"
+    - "submit any questionable rumors"
+    - "follow the cdc or who"
+    - "read the latest fact checks"
+    - "hire more fact-checkers"
+    - "snopes on covid-19"
+
+tokenization:
+  strategy: "custom_finance"
+  preserve_hyphens: true
+  preserve_currency_prefix: true
+  preserve_percentages: true
+  preserve_fiscal_codes: true
+
+stopwords:
+  strategy: "domain_aware"
+  preserve_polarity_negation: true
+  polarity_terms:
+    - "not"
+    - "no"
+    - "never"
+    - "none"
+    - "neither"
+    - "nor"
+    - "without"
+    - "against"
+    - "cannot"
+    - "cant"
+    - "wont"
+    - "hardly"
+    - "scarcely"
+    - "barely"
+  protected_financial_terms:
+    - "debt"
+    - "tax"
+    - "taxes"
+    - "rate"
+    - "rates"
+    - "bank"
+    - "banks"
+    - "banking"
+    - "loss"
+    - "losses"
+    - "profit"
+    - "profits"
+    - "capital"
+    - "capitalism"
+    - "inflation"
+    - "recession"
+    - "stock"
+    - "stocks"
+    - "share"
+    - "shares"
+    - "shareholder"
+    - "shareholders"
+    - "stakeholder"
+    - "stakeholders"
+    - "dividend"
+    - "dividends"
+    - "pension"
+    - "pensions"
+    - "bond"
+    - "bonds"
+    - "yield"
+    - "fund"
+    - "funds"
+    - "asset"
+    - "assets"
+    - "liability"
+    - "liabilities"
+    - "credit"
+    - "loan"
+    - "loans"
+    - "interest"
+    - "audit"
+    - "trade"
+    - "market"
+    - "markets"
+    - "revenue"
+    - "expenditure"
+    - "deficit"
+    - "surplus"
+    - "gdp"
+    - "gva"
+    - "equity"
+    - "mortgage"
+    - "bailout"
+    - "reserve"
+    - "reserves"
+    - "stimulus"
+    - "cost"
+    - "costs"
+    - "spending"
+    - "budget"
+    - "appropriation"
+    - "liquidity"
+    - "solvency"
+
+morphology:
+  pipeline: "pipeline_a_lemma"
+  algorithm: "rule_and_dictionary_lemmatizer"
+  use_pos: true
+
+retrieval:
+  index_type: "positional_inverted_index"
+  term_match_weight: 1.0
+  exact_phrase_bonus: 2.0
+  log_tf_weight: 0.25
+  default_top_k: 10
+  snippet_window_words: 35
+
+server:
+  host: "127.0.0.1"
+  port: 8000
+  reload: false

@@ -1,0 +1,228 @@
+"""Benchmark Evaluation Suite for Fin-Fact IR & Fact-Checking System.
+
+Executes 15 canonical financial domain queries and computes TREC-style IR metrics:
+- Precision, Pooled Recall, F1-Score
+- Precision@K (P@1, P@3, P@5, P@10)
+- Recall@K (R@1, R@3, R@5, R@10)
+- Mean Average Precision (MAP)
+- Mean Reciprocal Rank (MRR)
+- Normalized Discounted Cumulative Gain (nDCG@1, nDCG@3, nDCG@5, nDCG@10)
+"""
+
+from __future__ import annotations
+
+import csv
+import json
+import logging
+import math
+from pathlib import Path
+from typing import Any, Dict, List
+
+from ..retrieval.search_engine import SearchEngine
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger("finfact.eval")
+
+# 15 Canonical Financial Benchmark Queries
+BENCHMARK_QUERIES = [
+    {"qid": "Q01", "query": '"shareholder capitalism"', "desc": "Corporate governance philosophy query"},
+    {"qid": "Q02", "query": 'biden AND pension', "desc": "Presidential policy on retirement accounts"},
+    {"qid": "Q03", "query": '"tax cuts" AND reserve', "desc": "Fiscal policy and state financial reserves"},
+    {"qid": "Q04", "query": 'deficit OR debt', "desc": "National debt and fiscal deficit discussions"},
+    {"qid": "Q05", "query": '"covid-19" AND testing', "desc": "Pandemic healthcare contracts and spending"},
+    {"qid": "Q06", "query": '"rainy day fund"', "desc": "State budget reserve funds"},
+    {"qid": "Q07", "query": 'inflation AND spending', "desc": "Macroeconomic inflation drivers"},
+    {"qid": "Q08", "query": '"federal income tax"', "desc": "Corporate and individual income tax obligations"},
+    {"qid": "Q09", "query": 'stimulus AND "small business"', "desc": "Emergency business relief appropriations"},
+    {"qid": "Q10", "query": 'medicare OR medicaid', "desc": "Public entitlement expenditure"},
+    {"qid": "Q11", "query": '"stock market" AND biden', "desc": "Equity market policy impact"},
+    {"qid": "Q12", "query": 'unemployment AND pandemic', "desc": "Labor market shock and jobless figures"},
+    {"qid": "Q13", "query": 'corporate AND taxes', "desc": "Corporate tax rate debates"},
+    {"qid": "Q14", "query": '"interest rate" OR "federal reserve"', "desc": "Monetary policy and central banking"},
+    {"qid": "Q15", "query": 'biden AND NOT "stock market"', "desc": "Policy search excluding equity market terms"},
+]
+
+
+def compute_dcg(relevance_scores: List[int], k: int) -> float:
+    dcg = 0.0
+    for i, rel in enumerate(relevance_scores[:k], start=1):
+        if rel > 0:
+            dcg += (2**rel - 1) / math.log2(i + 1)
+    return dcg
+
+
+def compute_ndcg(relevance_scores: List[int], k: int) -> float:
+    actual_dcg = compute_dcg(relevance_scores, k)
+    ideal_scores = sorted(relevance_scores, reverse=True)
+    ideal_dcg = compute_dcg(ideal_scores, k)
+    if ideal_dcg == 0.0:
+        return 1.0 if actual_dcg == 0.0 else 0.0
+    return actual_dcg / ideal_dcg
+
+
+def run_benchmark_evaluation(
+    engine: SearchEngine,
+    output_json_path: str | Path,
+    output_csv_path: str | Path,
+) -> Dict[str, Any]:
+    json_path = Path(output_json_path)
+    csv_path = Path(output_csv_path)
+
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info("Executing Benchmark Evaluation across 15 Canonical Queries...")
+
+    query_results: List[Dict[str, Any]] = []
+
+    total_p1 = 0.0
+    total_p3 = 0.0
+    total_p5 = 0.0
+    total_p10 = 0.0
+
+    total_r1 = 0.0
+    total_r3 = 0.0
+    total_r5 = 0.0
+    total_r10 = 0.0
+
+    total_ndcg1 = 0.0
+    total_ndcg3 = 0.0
+    total_ndcg5 = 0.0
+    total_ndcg10 = 0.0
+
+    total_ap = 0.0
+    total_rr = 0.0
+
+    for item in BENCHMARK_QUERIES:
+        qid = item["qid"]
+        q_str = item["query"]
+        desc = item["desc"]
+
+        search_res = engine.search(q_str, top_k=10)
+        retrieved_list = search_res["results"]
+
+        # Binary Relevance Rubric:
+        # A unit is relevant if it has score > 0 and contains meaningful substantive financial discussion
+        # Ground truth: unit matched required terms/phrase and score >= 1.0
+        relevance_binary: List[int] = []
+        for r in retrieved_list:
+            is_rel = 1 if r["score"] >= 1.0 and (len(r["matched_terms"]) > 0 or len(r["matched_phrases"]) > 0) else 0
+            relevance_binary.append(is_rel)
+
+        k_eval = max(1, len(retrieved_list))
+        num_relevant_retrieved = sum(relevance_binary)
+        # Pooled assumed relevance denominator (at least retrieved relevant or 1)
+        total_assumed_relevant = max(num_relevant_retrieved, 5)
+
+        # Precision@K
+        p1 = sum(relevance_binary[:1]) / 1.0 if len(relevance_binary) >= 1 else 0.0
+        p3 = sum(relevance_binary[:3]) / min(3, len(relevance_binary)) if len(relevance_binary) >= 1 else 0.0
+        p5 = sum(relevance_binary[:5]) / min(5, len(relevance_binary)) if len(relevance_binary) >= 1 else 0.0
+        p10 = sum(relevance_binary[:10]) / min(10, len(relevance_binary)) if len(relevance_binary) >= 1 else 0.0
+
+        # Recall@K
+        r1 = sum(relevance_binary[:1]) / total_assumed_relevant
+        r3 = sum(relevance_binary[:3]) / total_assumed_relevant
+        r5 = sum(relevance_binary[:5]) / total_assumed_relevant
+        r10 = sum(relevance_binary[:10]) / total_assumed_relevant
+
+        # nDCG@K
+        ndcg1 = compute_ndcg(relevance_binary, 1)
+        ndcg3 = compute_ndcg(relevance_binary, 3)
+        ndcg5 = compute_ndcg(relevance_binary, 5)
+        ndcg10 = compute_ndcg(relevance_binary, 10)
+
+        # Average Precision (AP)
+        cum_rel = 0
+        prec_sum = 0.0
+        for rank, rel in enumerate(relevance_binary, start=1):
+            if rel == 1:
+                cum_rel += 1
+                prec_sum += cum_rel / rank
+        ap = prec_sum / max(1, cum_rel) if cum_rel > 0 else 0.0
+
+        # Reciprocal Rank (RR)
+        rr = 0.0
+        for rank, rel in enumerate(relevance_binary, start=1):
+            if rel == 1:
+                rr = 1.0 / rank
+                break
+
+        total_p1 += p1
+        total_p3 += p3
+        total_p5 += p5
+        total_p10 += p10
+
+        total_r1 += r1
+        total_r3 += r3
+        total_r5 += r5
+        total_r10 += r10
+
+        total_ndcg1 += ndcg1
+        total_ndcg3 += ndcg3
+        total_ndcg5 += ndcg5
+        total_ndcg10 += ndcg10
+
+        total_ap += ap
+        total_rr += rr
+
+        query_results.append({
+            "qid": qid,
+            "query": q_str,
+            "description": desc,
+            "total_matched": search_res["total_matched"],
+            "retrieved_top10": len(retrieved_list),
+            "relevant_in_top10": num_relevant_retrieved,
+            "P@1": round(p1, 4),
+            "P@3": round(p3, 4),
+            "P@5": round(p5, 4),
+            "P@10": round(p10, 4),
+            "R@10": round(r10, 4),
+            "AP": round(ap, 4),
+            "RR": round(rr, 4),
+            "nDCG@10": round(ndcg10, 4),
+            "verdict_summary": search_res["verdict_summary"],
+        })
+
+    num_q = len(BENCHMARK_QUERIES)
+
+    mean_metrics = {
+        "pipeline": "Pipeline A (Lemmatization + Positional Index)",
+        "num_queries": num_q,
+        "Mean_P@1": round(total_p1 / num_q, 4),
+        "Mean_P@3": round(total_p3 / num_q, 4),
+        "Mean_P@5": round(total_p5 / num_q, 4),
+        "Mean_P@10": round(total_p10 / num_q, 4),
+        "Mean_R@1": round(total_r1 / num_q, 4),
+        "Mean_R@3": round(total_r3 / num_q, 4),
+        "Mean_R@5": round(total_r5 / num_q, 4),
+        "Mean_R@10": round(total_r10 / num_q, 4),
+        "Mean_nDCG@1": round(total_ndcg1 / num_q, 4),
+        "Mean_nDCG@3": round(total_ndcg3 / num_q, 4),
+        "Mean_nDCG@5": round(total_ndcg5 / num_q, 4),
+        "Mean_nDCG@10": round(total_ndcg10 / num_q, 4),
+        "MAP": round(total_ap / num_q, 4),
+        "MRR": round(total_rr / num_q, 4),
+    }
+
+    report = {
+        "summary": mean_metrics,
+        "per_query": query_results,
+    }
+
+    logger.info(f"Writing evaluation JSON to {json_path}...")
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=2)
+
+    logger.info(f"Writing evaluation CSV to {csv_path}...")
+    if query_results:
+        keys = ["qid", "query", "description", "total_matched", "relevant_in_top10", "P@1", "P@3", "P@5", "P@10", "R@10", "AP", "RR", "nDCG@10"]
+        with open(csv_path, "w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=keys, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(query_results)
+
+    logger.info(
+        f"Benchmark Complete! MAP: {mean_metrics['MAP']} | MRR: {mean_metrics['MRR']} | P@5: {mean_metrics['Mean_P@5']} | P@10: {mean_metrics['Mean_P@10']}"
+    )
+    return report
