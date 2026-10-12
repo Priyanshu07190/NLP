@@ -1,14 +1,25 @@
-"""Rule and Dictionary Based Morphological Lemmatizer (Pipeline A).
+"""Rule and Dictionary Based Morphological Lemmatizer (Pipeline A & A+).
 
-Implements POS-guided inflectional reduction preserving domain semantics,
-preventing the over-truncation errors characteristic of Porter/Snowball stemmers.
-Zero-network dependency with full offline predictability.
+Supports both:
+1. Baseline Heuristic & Exception-driven lemmatization (without POS).
+2. POS-guided WordNet lemmatization (with POS tagging disambiguation).
+Zero-crash design with full offline fallback predictability.
 """
 
 from __future__ import annotations
 
+import logging
 import re
 from typing import Dict, Optional
+
+logger = logging.getLogger("finfact.lemma")
+
+try:
+    from nltk.stem import WordNetLemmatizer
+    _WORDNET_AVAILABLE = True
+except ImportError:
+    _WORDNET_AVAILABLE = False
+
 
 # Irregular forms table for English & Financial vocabulary
 IRREGULAR_LEMMAS: Dict[str, str] = {
@@ -117,29 +128,29 @@ IRREGULAR_LEMMAS: Dict[str, str] = {
     "being": "be",
 }
 
-# Suffix transformation rules for regular English inflection
-NOUN_SUFFIX_RULES = [
-    (re.compile(r"ies$"), "y"),         # companies -> company
-    (re.compile(r"(ches|shes|sses|xes|zes)$"), lambda m: m.group(1)[:-2]), # boxes -> box
-    (re.compile(r"(ves)$"), "f"),       # halves -> half
-    (re.compile(r"s$"), ""),            # investments -> investment, shares -> share
-]
-
-VERB_SUFFIX_RULES = [
-    (re.compile(r"ing$"), ""),          # defaulting fallback
-    (re.compile(r"ed$"), ""),           # liquidated fallback
-]
+PRESERVE_S_WORDS = {
+    "gas", "lens", "status", "crisis", "series", "species", "stimulus",
+    "surplus", "deficit", "basis", "analysis", "corps", "news"
+}
 
 
 class FinancialLemmatizer:
-    """Robust lemmatizer representing Pipeline A morphology."""
+    """Robust lemmatizer representing Pipeline A & Pipeline A+ (POS-guided)."""
 
     def __init__(self, exception_map: Dict[str, str] | None = None):
         self.exceptions = dict(IRREGULAR_LEMMAS)
         if exception_map:
             self.exceptions.update(exception_map)
 
+        self._wnl = None
+        if _WORDNET_AVAILABLE:
+            try:
+                self._wnl = WordNetLemmatizer()
+            except Exception:
+                self._wnl = None
+
     def lemmatize(self, word: str, pos: Optional[str] = None) -> str:
+        """Lemmatizes word. If pos is provided ('n','v','a','r'), uses POS-guided reduction."""
         if not word or len(word) <= 2:
             return word
 
@@ -154,18 +165,26 @@ class FinancialLemmatizer:
             lemma = self.exceptions[lower]
             return lemma if word.islower() else (lemma.capitalize() if word.istitle() else lemma)
 
-        # 2. General financial rules
-        # Preserve words that naturally end in 's'
-        if lower in {"gas", "lens", "status", "crisis", "series", "species", "stimulus", "surplus", "deficit"}:
+        # 2. Preserve words naturally ending in 's'
+        if lower in PRESERVE_S_WORDS:
             return word
 
-        # Handling verb -ing / -ed
+        # 3. If POS is provided and WordNet is available, use POS-guided lemmatization
+        if pos and self._wnl:
+            try:
+                wn_pos = pos if pos in {"n", "v", "a", "r"} else "n"
+                lemma = self._wnl.lemmatize(lower, pos=wn_pos)
+                if lemma and lemma != lower:
+                    return lemma
+            except Exception:
+                pass
+
+        # 4. Fallback / Baseline Heuristic Suffix Rules (Without POS)
+        # Verb -ing / -ed
         if lower.endswith("ing") and len(lower) > 5:
             base = lower[:-3]
-            # Doubled consonant: running -> run, dropping -> drop
             if len(base) >= 3 and base[-1] == base[-2] and base[-1] not in "ls":
                 return base[:-1]
-            # Silent e: proposing -> propose, liquidating -> liquidate
             if base.endswith(("at", "iz", "is", "uc", "us", "id", "iv", "ut")):
                 return base + "e"
             return base
@@ -180,7 +199,7 @@ class FinancialLemmatizer:
                 return lower[:-3] + "y"
             return base
 
-        # Handling noun plurals
+        # Noun plurals
         if lower.endswith("ies") and len(lower) > 4:
             return lower[:-3] + "y"
 

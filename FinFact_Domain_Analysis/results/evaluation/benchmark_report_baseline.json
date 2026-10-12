@@ -1,0 +1,337 @@
+{
+  "summary": {
+    "pipeline": "Pipeline A (Without POS)",
+    "num_queries": 15,
+    "Mean_P@1": 1.0,
+    "Mean_P@3": 1.0,
+    "Mean_P@5": 1.0,
+    "Mean_P@10": 1.0,
+    "Mean_R@1": 0.12,
+    "Mean_R@3": 0.3333,
+    "Mean_R@5": 0.5067,
+    "Mean_R@10": 0.9067,
+    "Mean_nDCG@1": 1.0,
+    "Mean_nDCG@3": 1.0,
+    "Mean_nDCG@5": 1.0,
+    "Mean_nDCG@10": 1.0,
+    "MAP": 1.0,
+    "MRR": 1.0
+  },
+  "per_query": [
+    {
+      "qid": "Q01",
+      "query": "\"shareholder capitalism\"",
+      "description": "Corporate governance philosophy query",
+      "total_matched": 2,
+      "retrieved_top10": 2,
+      "relevant_in_top10": 2,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 0.4,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 0,
+        "false": 2,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q02",
+      "query": "biden AND pension",
+      "description": "Presidential policy on retirement accounts",
+      "total_matched": 2,
+      "retrieved_top10": 2,
+      "relevant_in_top10": 2,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 0.4,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 1,
+        "false": 1,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q03",
+      "query": "\"tax cuts\" AND reserve",
+      "description": "Fiscal policy and state financial reserves",
+      "total_matched": 11,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 8,
+        "false": 1,
+        "nei": 1
+      }
+    },
+    {
+      "qid": "Q04",
+      "query": "deficit OR debt",
+      "description": "National debt and fiscal deficit discussions",
+      "total_matched": 775,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 10,
+        "false": 0,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q05",
+      "query": "\"covid-19\" AND testing",
+      "description": "Pandemic healthcare contracts and spending",
+      "total_matched": 82,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 2,
+        "false": 6,
+        "nei": 2
+      }
+    },
+    {
+      "qid": "Q06",
+      "query": "\"rainy day fund\"",
+      "description": "State budget reserve funds",
+      "total_matched": 25,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 7,
+        "false": 3,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q07",
+      "query": "inflation AND spending",
+      "description": "Macroeconomic inflation drivers",
+      "total_matched": 45,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 9,
+        "false": 1,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q08",
+      "query": "\"federal income tax\"",
+      "description": "Corporate and individual income tax obligations",
+      "total_matched": 144,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 0,
+        "false": 10,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q09",
+      "query": "stimulus AND \"small business\"",
+      "description": "Emergency business relief appropriations",
+      "total_matched": 31,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 5,
+        "false": 4,
+        "nei": 1
+      }
+    },
+    {
+      "qid": "Q10",
+      "query": "medicare OR medicaid",
+      "description": "Public entitlement expenditure",
+      "total_matched": 274,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 3,
+        "false": 2,
+        "nei": 5
+      }
+    },
+    {
+      "qid": "Q11",
+      "query": "\"stock market\" AND biden",
+      "description": "Equity market policy impact",
+      "total_matched": 4,
+      "retrieved_top10": 4,
+      "relevant_in_top10": 4,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 0.8,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 3,
+        "false": 1,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q12",
+      "query": "unemployment AND pandemic",
+      "description": "Labor market shock and jobless figures",
+      "total_matched": 35,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 2,
+        "false": 7,
+        "nei": 1
+      }
+    },
+    {
+      "qid": "Q13",
+      "query": "corporate AND taxes",
+      "description": "Corporate tax rate debates",
+      "total_matched": 176,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 7,
+        "false": 3,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q14",
+      "query": "\"interest rate\" OR \"federal reserve\"",
+      "description": "Monetary policy and central banking",
+      "total_matched": 165,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 10,
+        "false": 0,
+        "nei": 0
+      }
+    },
+    {
+      "qid": "Q15",
+      "query": "biden AND NOT \"stock market\"",
+      "description": "Policy search excluding equity market terms",
+      "total_matched": 677,
+      "retrieved_top10": 10,
+      "relevant_in_top10": 10,
+      "P@1": 1.0,
+      "P@3": 1.0,
+      "P@5": 1.0,
+      "P@10": 1.0,
+      "R@10": 1.0,
+      "AP": 1.0,
+      "RR": 1.0,
+      "nDCG@10": 1.0,
+      "verdict_summary": {
+        "true": 9,
+        "false": 1,
+        "nei": 0
+      }
+    }
+  ]
+}

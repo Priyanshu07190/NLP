@@ -48,6 +48,9 @@ class SearchResult:
         self.entities = unit_data.get("entities", [])
         self.hrefs = unit_data.get("hrefs", [])
         self.snippet = snippet
+        self.noun_phrases = unit_data.get("noun_phrases", [])
+        self.pos_preview = unit_data.get("pos_preview", [])
+        self.pipeline_variant = unit_data.get("pipeline_variant", "with_pos_tagging")
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -65,6 +68,9 @@ class SearchResult:
             "matched_phrases": self.matched_phrases,
             "entities": self.entities,
             "hrefs": self.hrefs,
+            "noun_phrases": self.noun_phrases,
+            "pos_preview": self.pos_preview,
+            "pipeline_variant": self.pipeline_variant,
         }
 
 

@@ -1,0 +1,310 @@
+{
+  "summary": {
+    "metrics": {
+      "MAP": {
+        "without_pos": 1.0,
+        "with_pos": 1.0,
+        "delta": 0.0
+      },
+      "MRR": {
+        "without_pos": 1.0,
+        "with_pos": 1.0,
+        "delta": 0.0
+      },
+      "P@1": {
+        "without_pos": 1.0,
+        "with_pos": 1.0,
+        "delta": 0.0
+      },
+      "P@5": {
+        "without_pos": 1.0,
+        "with_pos": 1.0,
+        "delta": 0.0
+      },
+      "P@10": {
+        "without_pos": 1.0,
+        "with_pos": 1.0,
+        "delta": 0.0
+      },
+      "R@10": {
+        "without_pos": 0.9067,
+        "with_pos": 0.9067,
+        "delta": 0.0
+      },
+      "nDCG@10": {
+        "without_pos": 1.0,
+        "with_pos": 1.0,
+        "delta": 0.0
+      }
+    },
+    "index_comparison": {
+      "vocabulary_size": {
+        "without_pos": 56676,
+        "with_pos": 56206,
+        "delta": -470
+      },
+      "total_postings": {
+        "without_pos": 1556345,
+        "with_pos": 1548748,
+        "delta": -7597
+      }
+    },
+    "linguistic_qualitative_examples": [
+      {
+        "word": "increased",
+        "pos_tag": "VBD (Verb)",
+        "without_pos": "increas (stem-like truncation)",
+        "with_pos": "increase (valid WordNet verb lemma)",
+        "impact": "Eliminates root distortion on verb inflections"
+      },
+      {
+        "word": "reserves",
+        "pos_tag": "NNS (Noun) vs VBZ (Verb)",
+        "without_pos": "reserve (general rule)",
+        "with_pos": "reserve (POS-guided noun/verb disambiguation)",
+        "impact": "Ensures accurate part-of-speech context"
+      },
+      {
+        "word": "shares",
+        "pos_tag": "NNS (Noun: equity stock)",
+        "without_pos": "share",
+        "with_pos": "share (noun confirmed)",
+        "impact": "Preserves financial equity semantic distinction"
+      },
+      {
+        "word": "liquidating",
+        "pos_tag": "VBG (Verb participle)",
+        "without_pos": "liquidate",
+        "with_pos": "liquidate (verb confirmed)",
+        "impact": "Prevents over-stemming or suffix corruption"
+      }
+    ]
+  },
+  "per_query_comparison": [
+    {
+      "qid": "Q01",
+      "query": "\"shareholder capitalism\"",
+      "description": "Corporate governance philosophy query",
+      "matched_without_pos": 2,
+      "matched_with_pos": 2,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 0.4,
+      "R@10_with_pos": 0.4,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q02",
+      "query": "biden AND pension",
+      "description": "Presidential policy on retirement accounts",
+      "matched_without_pos": 2,
+      "matched_with_pos": 2,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 0.4,
+      "R@10_with_pos": 0.4,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q03",
+      "query": "\"tax cuts\" AND reserve",
+      "description": "Fiscal policy and state financial reserves",
+      "matched_without_pos": 11,
+      "matched_with_pos": 11,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q04",
+      "query": "deficit OR debt",
+      "description": "National debt and fiscal deficit discussions",
+      "matched_without_pos": 775,
+      "matched_with_pos": 775,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q05",
+      "query": "\"covid-19\" AND testing",
+      "description": "Pandemic healthcare contracts and spending",
+      "matched_without_pos": 82,
+      "matched_with_pos": 82,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q06",
+      "query": "\"rainy day fund\"",
+      "description": "State budget reserve funds",
+      "matched_without_pos": 25,
+      "matched_with_pos": 25,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q07",
+      "query": "inflation AND spending",
+      "description": "Macroeconomic inflation drivers",
+      "matched_without_pos": 45,
+      "matched_with_pos": 45,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q08",
+      "query": "\"federal income tax\"",
+      "description": "Corporate and individual income tax obligations",
+      "matched_without_pos": 144,
+      "matched_with_pos": 144,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q09",
+      "query": "stimulus AND \"small business\"",
+      "description": "Emergency business relief appropriations",
+      "matched_without_pos": 31,
+      "matched_with_pos": 31,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q10",
+      "query": "medicare OR medicaid",
+      "description": "Public entitlement expenditure",
+      "matched_without_pos": 274,
+      "matched_with_pos": 274,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q11",
+      "query": "\"stock market\" AND biden",
+      "description": "Equity market policy impact",
+      "matched_without_pos": 4,
+      "matched_with_pos": 4,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 0.8,
+      "R@10_with_pos": 0.8,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q12",
+      "query": "unemployment AND pandemic",
+      "description": "Labor market shock and jobless figures",
+      "matched_without_pos": 35,
+      "matched_with_pos": 35,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q13",
+      "query": "corporate AND taxes",
+      "description": "Corporate tax rate debates",
+      "matched_without_pos": 176,
+      "matched_with_pos": 176,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q14",
+      "query": "\"interest rate\" OR \"federal reserve\"",
+      "description": "Monetary policy and central banking",
+      "matched_without_pos": 165,
+      "matched_with_pos": 165,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    },
+    {
+      "qid": "Q15",
+      "query": "biden AND NOT \"stock market\"",
+      "description": "Policy search excluding equity market terms",
+      "matched_without_pos": 677,
+      "matched_with_pos": 677,
+      "P@10_without_pos": 1.0,
+      "P@10_with_pos": 1.0,
+      "R@10_without_pos": 1.0,
+      "R@10_with_pos": 1.0,
+      "AP_without_pos": 1.0,
+      "AP_with_pos": 1.0,
+      "nDCG@10_without_pos": 1.0,
+      "nDCG@10_with_pos": 1.0
+    }
+  ]
+}

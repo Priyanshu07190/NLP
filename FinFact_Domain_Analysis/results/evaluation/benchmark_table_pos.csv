@@ -1,0 +1,16 @@
+qid,query,description,total_matched,relevant_in_top10,P@1,P@3,P@5,P@10,R@10,AP,RR,nDCG@10
+Q01,"""shareholder capitalism""",Corporate governance philosophy query,2,2,1.0,1.0,1.0,1.0,0.4,1.0,1.0,1.0
+Q02,biden AND pension,Presidential policy on retirement accounts,2,2,1.0,1.0,1.0,1.0,0.4,1.0,1.0,1.0
+Q03,"""tax cuts"" AND reserve",Fiscal policy and state financial reserves,11,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q04,deficit OR debt,National debt and fiscal deficit discussions,775,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q05,"""covid-19"" AND testing",Pandemic healthcare contracts and spending,82,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q06,"""rainy day fund""",State budget reserve funds,25,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q07,inflation AND spending,Macroeconomic inflation drivers,45,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q08,"""federal income tax""",Corporate and individual income tax obligations,144,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q09,"stimulus AND ""small business""",Emergency business relief appropriations,31,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q10,medicare OR medicaid,Public entitlement expenditure,274,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q11,"""stock market"" AND biden",Equity market policy impact,4,4,1.0,1.0,1.0,1.0,0.8,1.0,1.0,1.0
+Q12,unemployment AND pandemic,Labor market shock and jobless figures,35,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q13,corporate AND taxes,Corporate tax rate debates,176,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q14,"""interest rate"" OR ""federal reserve""",Monetary policy and central banking,165,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+Q15,"biden AND NOT ""stock market""",Policy search excluding equity market terms,677,10,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0

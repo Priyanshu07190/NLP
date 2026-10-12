@@ -1,7 +1,7 @@
 """FastAPI REST API & Interactive Search Engine Server.
 
 Provides endpoints for Boolean retrieval, exact phrase verification,
-claim-evidence inspection, and serves the Web GUI.
+claim-evidence inspection, POS tagging analysis, and side-by-side pipeline comparison.
 """
 
 from __future__ import annotations
@@ -14,16 +14,16 @@ import yaml
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 import sys
 
-# Paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 from src.indexing.inverted_index import PositionalInvertedIndex
+from src.preprocessing.pipeline import pipeline_a_baseline, pipeline_a_pos
 from src.retrieval.query_parser import parse_query
 from src.retrieval.search_engine import SearchEngine
 
@@ -36,8 +36,8 @@ with open(CONFIG_PATH, "r", encoding="utf-8") as f:
 
 app = FastAPI(
     title="Fin-Fact NLP Domain-Specific Retrieval System",
-    description="High-Precision Financial Fact-Checking and Evidence Retrieval Engine (Pipeline A: Lemmatization)",
-    version="1.0.0",
+    description="High-Precision Financial Fact-Checking and Evidence Retrieval Engine (Pipeline A+: POS-Guided Lemmatization)",
+    version="1.1.0",
 )
 
 app.add_middleware(
@@ -53,6 +53,10 @@ index: Optional[PositionalInvertedIndex] = None
 unit_store: Dict[str, Dict[str, Any]] = {}
 engine: Optional[SearchEngine] = None
 summary_stats: Dict[str, Any] = {}
+
+
+class AnalyzeRequest(BaseModel):
+    text: str
 
 
 @app.on_event("startup")
@@ -82,7 +86,7 @@ def startup_event():
             phrase_bonus=config["retrieval"]["exact_phrase_bonus"],
             log_tf_weight=config["retrieval"]["log_tf_weight"],
         )
-        print("Search Engine initialized successfully!")
+        print("POS-Guided Search Engine initialized successfully!")
     else:
         print("WARNING: Index files not found. Run pipeline indexing first.")
 
@@ -95,6 +99,7 @@ def health():
         "vocabulary_size": index.vocabulary_size if index else 0,
         "total_units": len(unit_store) if unit_store else 0,
         "total_postings": index.total_postings if index else 0,
+        "active_pipeline": "Pipeline A+ (With POS Tagging & POS-Guided Lemmatization)",
     }
 
 
@@ -106,7 +111,7 @@ def stats():
             "vocabulary_size": index.vocabulary_size if index else 0,
             "total_units": len(unit_store) if unit_store else 0,
             "total_postings": index.total_postings if index else 0,
-            "pipeline": "Pipeline A (Lemmatization + Positional Postings)",
+            "pipeline": "Pipeline A+ (With POS Tagging & POS-Guided Lemmatization)",
         },
     }
 
@@ -160,9 +165,40 @@ def get_claim(claim_id: str):
         "justification": justification_unit.get("text", "") if justification_unit else "",
         "digest": digest_unit.get("text", "") if digest_unit else "",
         "evidence_sentences": [
-            {"unit_id": e["unit_id"], "sentence": e["text"], "hrefs": e.get("hrefs", [])}
+            {
+                "unit_id": e["unit_id"],
+                "sentence": e["text"],
+                "hrefs": e.get("hrefs", []),
+                "noun_phrases": e.get("noun_phrases", []),
+                "pos_preview": e.get("pos_preview", []),
+            }
             for e in evidence_units
         ],
+    }
+
+
+@app.post("/api/analyze")
+def analyze_text(payload: AnalyzeRequest):
+    """Analyze a piece of text to return POS tags, lemmas, and noun phrases."""
+    res_pos = pipeline_a_pos.process_text(payload.text)
+    res_base = pipeline_a_baseline.process_text(payload.text)
+
+    token_diffs = []
+    for i, tok_p in enumerate(res_pos["tokens"]):
+        lemma_base = res_base["tokens"][i]["lemma"] if i < len(res_base["tokens"]) else ""
+        token_diffs.append({
+            "text": tok_p["text"],
+            "pos_tag": tok_p["pos_tag"],
+            "lemma_with_pos": tok_p["lemma"],
+            "lemma_without_pos": lemma_base,
+            "is_stopword": tok_p["is_stopword"],
+        })
+
+    return {
+        "text": payload.text,
+        "tokens": token_diffs,
+        "noun_phrases": res_pos["noun_phrases"],
+        "entities": res_pos["entities"],
     }
 
 
@@ -172,6 +208,16 @@ def get_benchmark():
     if not bench_file.exists():
         raise HTTPException(status_code=404, detail="Benchmark results not generated yet.")
     with open(bench_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+
+@app.get("/api/comparison")
+def get_comparison():
+    comp_file = BASE_DIR / "results/evaluation/pos_comparison_report.json"
+    if not comp_file.exists():
+        raise HTTPException(status_code=404, detail="Comparison report not generated yet. Run: python run_pipeline.py --compare")
+    with open(comp_file, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data
 
