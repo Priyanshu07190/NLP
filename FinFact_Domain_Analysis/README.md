@@ -13,7 +13,7 @@
 
 This project implements an end-to-end, production-grade **Domain-Specific Natural Language Processing (NLP) and Information Retrieval (IR) System** tailored to the **Fin-Fact** financial fact-checking dataset.
 
-Per academic recommendations, the system evaluates and contrasts two architectures:
+To quantify the empirical impact of syntactic and morphological disambiguation, the system evaluates and contrasts two architectures:
 1. **Pipeline A (Baseline - Without POS):** Operates purely on heuristic morphological rules and dictionary exceptions.
 2. **Pipeline A+ (With POS Tagging):** Employs **Penn Treebank POS Tagging** to guide **WordNet lemmatization**, disambiguating parts of speech (e.g. action verbs vs. financial nouns) and extracting domain noun phrases (*"corporate taxes"*, *"rainy day fund"*).
 
@@ -100,7 +100,7 @@ Both engines were evaluated against the 15 canonical financial domain benchmark 
 | **Recall @ 10 (R@10)** | **0.9067** | **0.9067** | `0.0000` | Tie (Captures over 90% of pool) |
 | **nDCG @ 10** | **1.0000** | **1.0000** | `0.0000` | Tie (Ideal ranking order) |
 
-**Conclusion for Academic Assessment:**
+**Architectural Findings & Empirical Synthesis:**
 * **Retrieval Quality:** Both pipelines achieve top-tier precision because the AST parser and positional distance verification strictly enforce phrase constraints.
 * **Linguistic Representation:** **Pipeline A+ (With POS Tagging) is distinctly superior** because it eliminates stem truncations (`increas` $\rightarrow$ `increase`), merges spurious vocabulary fragments (-470 terms), and enables automated Noun Phrase concept extraction (*"rainy day fund"*, *"corporate taxes"*).
 
